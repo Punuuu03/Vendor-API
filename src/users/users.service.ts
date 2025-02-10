@@ -1,4 +1,3 @@
-// src/users/users.service.ts
 import {
   Injectable,
   ConflictException,
@@ -93,5 +92,11 @@ export class UsersService {
     await this.userRepository.save(user);
 
     return `User status updated to ${status}`;
+  }
+
+  async getDistributors(): Promise<User[]> {
+    return await this.userRepository.find({
+      where: { role: UserRole.DISTRIBUTOR },
+    });
   }
 }

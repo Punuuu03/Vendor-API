@@ -1,4 +1,3 @@
-// src/users/users.controller.ts
 import {
   Controller,
   Post,
@@ -40,5 +39,10 @@ export class UsersController {
       throw new BadRequestException('Status is required');
     }
     return this.usersService.updateUserStatus(userId, body.status);
+  }
+
+  @Get('distributors')
+  async getDistributors(): Promise<User[]> {
+    return this.usersService.getDistributors();
   }
 }
