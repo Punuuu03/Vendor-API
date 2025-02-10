@@ -1,14 +1,24 @@
-// src/main.ts
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigModule } from '@nestjs/config';
-
-// Load environment variables globally
+import * as bodyParser from 'body-parser';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+
+  // Load environment variables
   ConfigModule.forRoot(); 
+
+
+
+    // Enable CORS (Optional, but useful for frontend)
+    app.enableCors();
+
+  // Apply body-parser middleware
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('NestJS Auth API')

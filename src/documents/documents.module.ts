@@ -10,4 +10,4 @@ import { S3Service } from './s3.service';
   providers: [DocumentsService, S3Service],
   controllers: [DocumentsController],
 })
-export class DocumentsModule {}
+export class DocumentsModule { }
