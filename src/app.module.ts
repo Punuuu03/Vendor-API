@@ -11,6 +11,7 @@ import { config } from 'dotenv';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { DocumentsModule } from './documents/documents.module';
+import { CertificatesModule } from './certificates/certificates.module';
 
 config();
 
@@ -28,13 +29,14 @@ config();
       database: process.env.DB_NAME || 'vendor',
       autoLoadEntities: true,
       synchronize: true, // Disable in production and use migrations instead
-      migrationsRun: true, // Run migrations instead
-      migrations: ['dist/migrations/*.js'],
+      // migrationsRun: true, // Run migrations instead
+      // migrations: ['dist/migrations/*.js'],
     }),
     UsersModule,
     CategoriesModule,
     SubcategoriesModule,
     DocumentsModule,
+    CertificatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

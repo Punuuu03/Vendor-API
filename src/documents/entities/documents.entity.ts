@@ -11,7 +11,7 @@ export class Document {
   document_id: number;
 
   @Column({ type: 'int', nullable: false })
-  user_id: number;
+  user_id: number; // User who applied for the document
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   category_name: string;
@@ -36,10 +36,14 @@ export class Document {
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Approved', 'Rejected'],
+    enum: ['Pending', 'Approved', 'Rejected', 'Processing', 'Completed'], // ✅ Added Processing & Completed
     default: 'Pending',
   })
   status: string;
+  
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  distributor_id: string | null; // Default is NULL
 
   @CreateDateColumn()
   uploaded_at: Date;

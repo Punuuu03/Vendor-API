@@ -63,6 +63,42 @@ export class DocumentsController {
     } catch (error) {
       console.error('❌ Error updating status:', error);
       throw new InternalServerErrorException('Failed to update document status');
-    }
-  }
+    }
+  }
+
+  // 📌 PUT API to assign Distributor to a Document
+  @Put('assign-distributor/:id')
+async assignDistributor(
+  @Param('id') documentId: number,
+  @Body() body: any, // Log the full body to debug
+) {
+  console.log("📩 Received request body:", body); // Debugging Log
+
+  const distributorId = body.distributor_id;
+
+  if (!distributorId) {
+    throw new BadRequestException('Distributor user ID is required.');
+  }
+
+  return this.documentsService.assignDistributor(documentId, distributorId);
+  }
+
+
+
+
+  // 📌 GET API to fetch documents by distributor_id
+@Get('list/:distributorId')
+async getDocumentsByDistributor(@Param('distributorId') distributorId: string) {
+  try {
+    if (!distributorId) {
+      throw new BadRequestException('Distributor ID is required.');
+    }
+
+    return this.documentsService.getAllDocumentsByDistributor(distributorId);
+  } catch (error) {
+    console.error('❌ Error fetching distributor documents:', error);
+    throw new InternalServerErrorException('Failed to fetch documents for distributor');
+  }
+}
+
 }

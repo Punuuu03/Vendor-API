@@ -13,6 +13,7 @@ export class DocumentsService {
 
     private readonly s3Service: S3Service // ✅ Inject S3Service properly
   ) { }
+
   async getAllDocuments() {
     try {
       const documents = await this.documentRepository.find();
@@ -25,7 +26,7 @@ export class DocumentsService {
 
   async updateDocumentStatus(documentId: number, status: string) {
     try {
-      const document = await this.documentRepository.findOne({ where: { user_id: documentId } });
+      const document = await this.documentRepository.findOne({ where: { document_id: documentId } });
 
       if (!document) {
         throw new Error('Document not found.');
@@ -70,6 +71,7 @@ export class DocumentsService {
         address: body.address || '',
         documents: documentFiles,
         status: 'Pending',
+        distributor_id: null, // ✅ Initially null
       });
 
       const savedDocument = await this.documentRepository.save(document);
@@ -79,6 +81,58 @@ export class DocumentsService {
     } catch (error) {
       console.error('❌ Error saving document:', error.message);
       throw new InternalServerErrorException('Failed to process document upload');
-    }
-  }
+    }
+  }
+
+
+  async assignDistributor(documentId: number, distributorId: string) {
+    try {
+      console.log("🔍 Assigning distributor:", distributorId); // Debugging Log
+  
+      const document = await this.documentRepository.findOne({
+        where: { document_id: documentId },
+      });
+  
+      if (!document) {
+        throw new BadRequestException('Document not found.');
+      }
+  
+      document.distributor_id = distributorId; // ✅ Only update distributor_id (status remains unchanged)
+  
+      const updatedDocument = await this.documentRepository.save(document);
+  
+      console.log("✅ Distributor assigned successfully:", updatedDocument);
+      return { message: 'Distributor assigned successfully', document: updatedDocument };
+    } catch (error) {
+      console.error('❌ Error assigning distributor:', error);
+      throw new InternalServerErrorException('Could not assign distributor');
+    }
+
+
+
+    
+    
+      }
+
+
+      async getAllDocumentsByDistributor(distributorId: string) {
+        try {
+          console.log("🔍 Fetching documents for distributor:", distributorId); // Debug Log
+      
+          const documents = await this.documentRepository.find({
+            where: { distributor_id: distributorId },
+          });
+      
+          console.log("📄 Documents fetched:", documents); // Log fetched documents
+      
+          return {
+            message: 'Documents fetched successfully for distributor',
+            documents,
+          };
+        } catch (error) {
+          console.error('❌ Error fetching documents for distributor:', error);
+          throw new InternalServerErrorException('Could not fetch documents');
+        }
+      }
+      
 }
