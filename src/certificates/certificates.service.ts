@@ -17,14 +17,18 @@ export class CertificatesService {
     if (!file) {
       throw new BadRequestException('File is required.');
     }
-
+  
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException('Only images (JPG, PNG, WEBP) and PDFs are allowed.');
     }
-
+  
+    if (file.size > 200 * 1024) { // 200KB size limit
+      throw new BadRequestException('File size must not exceed 200KB.');
+    }
+  
     const fileUrl = await this.s3Service.uploadFile(file);
-
+  
     const certificate = this.certificateRepository.create({
       certificate_id: Number(body.certificate_id), // Convert to number
       certificate_name: body.certificate_name,
@@ -33,10 +37,10 @@ export class CertificatesService {
       distributor_id: Number(body.distributor_id),
       file_url: fileUrl,
     });
-
+  
     return await this.certificateRepository.save(certificate);
   }
-
+  
   // ✅ Fetch a single document by certificate_id
   async getDocumentById(certificateId: string) {
     const id = Number(certificateId); // Convert to number

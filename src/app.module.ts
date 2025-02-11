@@ -12,6 +12,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { DocumentsModule } from './documents/documents.module';
 import { CertificatesModule } from './certificates/certificates.module';
+import { RequiredDocumentsModule } from './required-documents/required-documents.module';
+
 
 config();
 
@@ -37,6 +39,7 @@ config();
     SubcategoriesModule,
     DocumentsModule,
     CertificatesModule,
+    RequiredDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

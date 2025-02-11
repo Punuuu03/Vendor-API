@@ -14,10 +14,14 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('documents')
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) { }
+  constructor(private readonly documentsService: DocumentsService) {}
 
   @Post('upload')
-  @UseInterceptors(FilesInterceptor('files', 10)) // Accepts multiple files (max 10)
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      limits: { fileSize: 200 * 1024 }, // 200KB max file size
+    }),
+  )
   async uploadDocuments(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: any,
@@ -27,7 +31,7 @@ export class DocumentsController {
       console.log('📝 Received Body:', body);
 
       if (!files || files.length === 0) {
-        throw new BadRequestException("At least one file must be uploaded.");
+        throw new BadRequestException('At least one file must be uploaded.');
       }
 
       return this.documentsService.uploadDocuments(files, body);
