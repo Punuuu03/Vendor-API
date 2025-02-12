@@ -8,7 +8,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './entities/users.entity';
+import { User, UserRole } from './entities/users.entity';
 
 @Controller('users')
 export class UsersController {
@@ -19,16 +19,7 @@ export class UsersController {
     return this.usersService.register(data);
   }
 
-  @Post('login')
-  async login(
-    @Body() body: { email: string; password: string },
-  ): Promise<{ token: string }> {
-    const { email, password } = body;
-    if (!email || !password) {
-      throw new BadRequestException('Email and password are required');
-    }
-    return this.usersService.login(email, password);
-  }
+
 
   @Patch('status/:id')
   async updateUserStatus(
@@ -63,4 +54,16 @@ export class UsersController {
     }
     return this.usersService.updatePassword(userId, body.newPassword);
   }
+
+
+  @Post('login')
+  async login(
+    @Body() body: { email: string; password: string },
+  ): Promise<{ token: string; role: UserRole }> {
+    const { email, password } = body;
+    if (!email || !password) {
+      throw new BadRequestException('Email and password are required');
+    }
+    return this.usersService.login(email, password);
+  }
 }

@@ -14,6 +14,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { RequiredDocumentsModule } from './required-documents/required-documents.module';
 import { DocumentType } from './document-types/entities/document-type/document-type.entity.';
+import { DocumentTypesModule } from './document-types/document-types.module';
 
 
 config();
@@ -39,6 +40,7 @@ config();
     CategoriesModule,
     SubcategoriesModule,
     DocumentsModule,
+    DocumentTypesModule,
     CertificatesModule,
     RequiredDocumentsModule,
     DocumentType
