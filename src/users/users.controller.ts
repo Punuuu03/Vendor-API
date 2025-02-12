@@ -45,4 +45,22 @@ export class UsersController {
   async getDistributors(): Promise<User[]> {
     return this.usersService.getDistributors();
   }
+
+  // ✅ Fetch all registered users
+  @Get('register')
+  async getRegisteredUsers(): Promise<User[]> {
+    return this.usersService.getRegisteredUsers();
+  }
+
+  // ✅ Update password for a specific user
+  @Patch('password/:id')
+  async updatePassword(
+    @Param('id') userId: number,
+    @Body() body: { newPassword: string },
+  ): Promise<string> {
+    if (!body.newPassword) {
+      throw new BadRequestException('New password is required');
+    }
+    return this.usersService.updatePassword(userId, body.newPassword);
+  }
 }

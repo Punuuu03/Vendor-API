@@ -1,8 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException,InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Certificate } from './entities/certificates.entity';
-import { S3Service } from './s3certificates.service';
+import { S3Service } from './s3.service';
 import { Express } from 'express';
 
 @Injectable()
@@ -12,35 +12,58 @@ export class CertificatesService {
     private readonly certificateRepository: Repository<Certificate>,
     private readonly s3Service: S3Service
   ) {}
-
+ 
+  
   async uploadCertificate(file: Express.Multer.File, body: any) {
-    if (!file) {
-      throw new BadRequestException('File is required.');
+    try {
+      console.log('📂 Received File:', file);
+      console.log('📝 Received Body:', body);
+
+      if (!file) {
+        throw new BadRequestException('File is required.');
+      }
+
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Only JPG, PNG, WEBP, and PDF files are allowed.');
+      }
+
+      // ✅ Upload file to S3 and get URL
+      const fileUrl = await this.s3Service.uploadFile(file);
+
+      // ✅ Ensure user_id and document_id are valid numbers
+      const userId = body.user_id ? Number(body.user_id) : null;
+      const documentId = body.document_id ? Number(body.document_id) : null;
+
+      if (!userId || !documentId) {
+        throw new BadRequestException('User ID and Document ID are required and must be valid numbers.');
+      }
+
+      // ✅ Ensure distributor_id is stored as the correct type
+      const distributorId = body.distributor_id ? String(body.distributor_id) : undefined;
+
+      // ✅ Create a new certificate object
+      const certificate = this.certificateRepository.create({
+        certificate_name: body.certificate_name || 'Unnamed Certificate',
+        user_id: userId,
+        document_id: documentId,
+        distributor_id: distributorId,
+        file_url: fileUrl,
+      });
+
+      // ✅ Save the certificate in the database
+      const savedCertificate = await this.certificateRepository.save(certificate);
+      console.log('✅ Certificate saved successfully:', savedCertificate);
+
+      return { message: 'Upload successful', certificate: savedCertificate };
+    } catch (error) {
+      console.error('❌ Error saving certificate:', error);
+      throw new InternalServerErrorException('Failed to process certificate upload');
     }
-  
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException('Only images (JPG, PNG, WEBP) and PDFs are allowed.');
-    }
-  
-    if (file.size > 200 * 1024) { // 200KB size limit
-      throw new BadRequestException('File size must not exceed 200KB.');
-    }
-  
-    const fileUrl = await this.s3Service.uploadFile(file);
-  
-    const certificate = this.certificateRepository.create({
-      certificate_id: Number(body.certificate_id), // Convert to number
-      certificate_name: body.certificate_name,
-      user_id: Number(body.user_id), // Ensure correct type
-      document_id: Number(body.document_id),
-      distributor_id: Number(body.distributor_id),
-      file_url: fileUrl,
-    });
-  
-    return await this.certificateRepository.save(certificate);
   }
+
   
+
   // ✅ Fetch a single document by certificate_id
   async getDocumentById(certificateId: string) {
     const id = Number(certificateId); // Convert to number

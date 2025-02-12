@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CertificatesService } from './certificates.service';
 import { CertificatesController } from './certificates.controller';
 import { Certificate } from './entities/certificates.entity';
-import { S3Service } from './s3certificates.service';
+import { S3Service } from './s3.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Certificate])],

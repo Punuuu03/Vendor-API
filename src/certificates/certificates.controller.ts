@@ -6,6 +6,8 @@ import {
     UseInterceptors,
     UploadedFile,
     Body,
+    BadRequestException,
+    InternalServerErrorException
   } from '@nestjs/common';
   import { CertificatesService } from './certificates.service';
   import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,12 +18,22 @@ import {
   
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadCertificate(
-      @UploadedFile() file: Express.Multer.File,
-      @Body() body: any
-    ) {
-      return this.certificatesService.uploadCertificate(file, body);
+    async uploadCertificate(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
+      try {
+        console.log('📂 Received File:', file);
+        console.log('📝 Received Body:', body);
+  
+        if (!file) {
+          throw new BadRequestException('File is required.');
+        }
+  
+        return await this.certificatesService.uploadCertificate(file, body);
+      } catch (error) {
+        console.error('❌ Controller Error:', error);
+        throw new InternalServerErrorException('Failed to upload certificate.');
+      }
     }
+  
   
     // ✅ Fetch a single document by certificate_id
     @Get(':certificate_id')

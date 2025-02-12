@@ -99,4 +99,24 @@ export class UsersService {
       where: { role: UserRole.DISTRIBUTOR },
     });
   }
+
+  // ✅ Fetch all registered users
+  async getRegisteredUsers(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
+
+  // ✅ Update password for a specific user
+  async updatePassword(userId: number, newPassword: string): Promise<string> {
+    const user = await this.userRepository.findOne({ where: { user_id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await this.userRepository.save(user);
+
+    return 'Password updated successfully';
+  }
 }

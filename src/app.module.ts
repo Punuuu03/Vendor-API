@@ -13,6 +13,7 @@ import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { DocumentsModule } from './documents/documents.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { RequiredDocumentsModule } from './required-documents/required-documents.module';
+import { DocumentType } from './document-types/entities/document-type/document-type.entity.';
 
 
 config();
@@ -40,6 +41,7 @@ config();
     DocumentsModule,
     CertificatesModule,
     RequiredDocumentsModule,
+    DocumentType
   ],
   controllers: [AppController],
   providers: [AppService],

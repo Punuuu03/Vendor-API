@@ -19,7 +19,7 @@ export class DocumentsController {
   @Post('upload')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
-      limits: { fileSize: 200 * 1024 }, // 200KB max file size
+      limits: { fileSize: 500 * 1024 }, // 200KB max file size
     }),
   )
   async uploadDocuments(

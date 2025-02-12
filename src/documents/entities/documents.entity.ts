@@ -36,7 +36,7 @@ export class Document {
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Approved', 'Rejected', 'Processing', 'Completed'], // ✅ Added Processing & Completed
+    enum: ['Pending', 'Approved', 'Rejected', 'Processing','Uploaded', 'Completed'], // ✅ Added Processing & Completed
     default: 'Pending',
   })
   status: string;
