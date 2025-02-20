@@ -35,4 +35,14 @@ export class RequiredDocumentsController {
     async remove(@Param('id', ParseIntPipe) id: number) {
         return this.requiredDocumentsService.remove(id);
     }
+
+
+    @Get(':categoryId/:subcategoryId')
+async findByCategoryAndSubcategory(
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+    @Param('subcategoryId', ParseIntPipe) subcategoryId: number
+) {
+    return this.requiredDocumentsService.findByCategoryAndSubcategory(categoryId, subcategoryId);
+}
+
 }

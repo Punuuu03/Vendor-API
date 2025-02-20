@@ -15,6 +15,9 @@ import { CertificatesModule } from './certificates/certificates.module';
 import { RequiredDocumentsModule } from './required-documents/required-documents.module';
 import { DocumentType } from './document-types/entities/document-type/document-type.entity.';
 import { DocumentTypesModule } from './document-types/document-types.module';
+import { StatisticsModule } from './statistics/statistics.module';
+import { FeildNamesModule } from './feild_names/feild_names.module';
+import { UserDashboardModule } from './userdashboard/userdashboard.module';
 
 
 config();
@@ -43,9 +46,12 @@ config();
     DocumentTypesModule,
     CertificatesModule,
     RequiredDocumentsModule,
-    DocumentType
+    DocumentType,
+    FeildNamesModule,
+    StatisticsModule,
+    UserDashboardModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

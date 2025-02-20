@@ -11,10 +11,16 @@ export class Document {
   document_id: number;
 
   @Column({ type: 'int', nullable: false })
-  user_id: number; // User who applied for the document
+  user_id: number;
+
+  @Column({ type: 'int', nullable: false })
+  category_id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   category_name: string;
+
+  @Column({ type: 'int', nullable: false })
+  subcategory_id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   subcategory_name: string;
@@ -36,15 +42,21 @@ export class Document {
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Approved', 'Rejected', 'Processing','Uploaded', 'Completed'], // ✅ Added Processing & Completed
+    enum: ['Pending', 'Approved', 'Rejected', 'Uploaded', 'Completed'],
     default: 'Pending',
   })
   status: string;
-  
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  distributor_id: string | null; // Default is NULL
+  distributor_id: string | null;
 
   @CreateDateColumn()
   uploaded_at: Date;
+
+  @Column('json', { nullable: false })
+  document_fields: Record<string, string | number>;
+
+  // ✅ Unique application ID (Now handled in service)
+  @Column({ type: 'varchar', length: 10, unique: true })
+  application_id: string;
 }

@@ -29,11 +29,26 @@ export class SubcategoriesService {
   }
 
   async findOne(subcategoryId: number): Promise<Subcategory> {
-    const subcategory = await this.subcategoryRepository.findOne({ where: { subcategory_id: subcategoryId }, relations: ['category'] });
+    const subcategory = await this.subcategoryRepository.findOne({
+      where: { subcategory_id: subcategoryId },
+      relations: ['category'],
+    });
     if (!subcategory) {
       throw new NotFoundException('Subcategory not found');
     }
     return subcategory;
+  }
+
+  async findByCategory(categoryId: number): Promise<Subcategory[]> {
+    const category = await this.categoryRepository.findOne({ where: { category_id: categoryId } });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    return this.subcategoryRepository.find({
+      where: { category: { category_id: categoryId } },
+      relations: ['category'],
+    });
   }
 
   async update(subcategoryId: number, subcategoryName: string): Promise<Subcategory> {

@@ -16,6 +16,8 @@ export class Category {
   @OneToMany(() => RequiredDocument, (requiredDocument) => requiredDocument.category)
   requiredDocuments: RequiredDocument[];
 
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
+  id: any;
 }

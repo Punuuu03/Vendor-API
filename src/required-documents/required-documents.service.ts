@@ -56,4 +56,17 @@ export class RequiredDocumentsService {
         await this.requiredDocumentRepository.remove(requiredDocument);
         return { message: 'Required Document deleted successfully' };
     }
+
+
+
+    async findByCategoryAndSubcategory(categoryId: number, subcategoryId: number): Promise<RequiredDocument[]> {
+        return this.requiredDocumentRepository.find({
+            where: {
+                category: { category_id: categoryId },
+                subcategory: { subcategory_id: subcategoryId },
+            },
+            relations: ['category', 'subcategory'],
+        });
+    }
+    
 }

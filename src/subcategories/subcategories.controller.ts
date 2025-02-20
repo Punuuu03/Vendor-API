@@ -20,6 +20,11 @@ export class SubcategoriesController {
     return this.subcategoriesService.findOne(subcategoryId);
   }
 
+  @Get('category/:categoryId')
+  async findByCategory(@Param('categoryId', ParseIntPipe) categoryId: number) {
+    return this.subcategoriesService.findByCategory(categoryId);
+  }
+
   @Put(':id')
   async update(@Param('id', ParseIntPipe) subcategoryId: number, @Body('subcategory_name') subcategoryName: string) {
     return this.subcategoriesService.update(subcategoryId, subcategoryName);
