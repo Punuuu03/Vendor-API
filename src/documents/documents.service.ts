@@ -29,36 +29,40 @@ export class DocumentsService {
 
 
 
-  async updateDocumentStatus(documentId: number, status: string) {
+  async updateDocumentStatus(documentId: number, status: string, rejectionReason?: string) {
     try {
+      // Find the document by its ID
       const document = await this.documentRepository.findOne({ where: { document_id: documentId } });
-
+  
       if (!document) {
         throw new BadRequestException('Document not found.');
       }
-
+  
       // Update the document status
       document.status = status;
       const updatedDocument = await this.documentRepository.save(document);
-
-      // Send email based on the status
+  
+      // Send email based on the updated status
       if (status === 'Approved') {
         await this.sendStatusApprovedEmail(updatedDocument); // Send approved email
       } else if (status === 'Rejected') {
-        await this.sendStatusRejectedEmail(updatedDocument); // Send rejected email
+        if (!rejectionReason) {
+          throw new BadRequestException('Rejection reason is required for rejected status.');
+        }
+        await this.sendStatusRejectedEmail(updatedDocument, rejectionReason); // Send rejected email with reason
       } else if (status === 'Completed') {
         await this.sendStatusCompletedEmail(updatedDocument); // Send completed email
       } else if (status === 'Uploaded') {
         await this.sendStatusUploadedEmail(updatedDocument); // Send uploaded email
       }
-
+  
       return { message: 'Status updated successfully', document: updatedDocument };
     } catch (error) {
       console.error('❌ Error updating status:', error);
       throw new InternalServerErrorException('Could not update document status');
     }
   }
-
+  
   // Send email when document status is "Approved"
   async sendStatusApprovedEmail(document: any) {
     const transporter = nodemailer.createTransport({
@@ -92,36 +96,73 @@ Aaradhya Cyber`,
   }
 
   // Send email when document status is "Rejected"
-  async sendStatusRejectedEmail(document: any) {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'rutujadeshmukh175@gmail.com', // Your email address
-        pass: 'hzaj osby vnsh ctyq', // Your email password or app password
-      },
-    });
+//   async sendStatusRejectedEmail(document: any) {
+//     const transporter = nodemailer.createTransport({
+//       service: 'gmail',
+//       auth: {
+//         user: 'rutujadeshmukh175@gmail.com', // Your email address
+//         pass: 'hzaj osby vnsh ctyq', // Your email password or app password
+//       },
+//     });
 
-    const mailOptions = {
-      from: 'rutujadeshmukh175@gmail.com',
-      to: document.email,
-      subject: 'Application Status: Rejected',
-      text: `Dear ${document.name},
+//     const mailOptions = {
+//       from: 'rutujadeshmukh175@gmail.com',
+//       to: document.email,
+//       subject: 'Application Status: Rejected',
+//       text: `Dear ${document.name},
+
+// We regret to inform you that your application for the category "${document.category_name}" has been rejected.
+
+// Please contact us for the next steps.
+
+// Best regards,
+// Aaradhya Cyber`,
+//     };
+
+//     try {
+//       await transporter.sendMail(mailOptions);
+//       console.log('✅ Email sent successfully');
+//     } catch (error) {
+//       console.error('❌ Error sending email:', error);
+//     }
+//   }
+
+
+
+
+async sendStatusRejectedEmail(document: any, rejectionReason: string) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'rutujadeshmukh175@gmail.com', // Your email address
+      pass: 'hzaj osby vnsh ctyq', // Your email password or app password
+    },
+  });
+
+  const mailOptions = {
+    from: 'rutujadeshmukh175@gmail.com',
+    to: document.email,
+    subject: 'Application Status: Rejected',
+    text: `Dear ${document.name},
 
 We regret to inform you that your application for the category "${document.category_name}" has been rejected.
+
+Reason for rejection:
+${rejectionReason}
 
 Please contact us for the next steps.
 
 Best regards,
 Aaradhya Cyber`,
-    };
+  };
 
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log('✅ Email sent successfully');
-    } catch (error) {
-      console.error('❌ Error sending email:', error);
-    }
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent successfully');
+  } catch (error) {
+    console.error('❌ Error sending email:', error);
   }
+}
 
   // Send email when document status is "Completed"
   async sendStatusCompletedEmail(document: any) {

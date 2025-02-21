@@ -67,22 +67,42 @@ export class DocumentsController {
 
 
   // 📌 PUT API to update document status
-  @Put('update-status/:id')
-  async updateDocumentStatus(
-    @Param('id') documentId: number,
-    @Body('status') status: string,
-  ) {
-    try {
-      if (!status) {
-        throw new BadRequestException('Status is required.');
-      }
+  // @Put('update-status/:id')
+  // async updateDocumentStatus(
+  //   @Param('id') documentId: number,
+  //   @Body('status') status: string,
+  // ) {
+  //   try {
+  //     if (!status) {
+  //       throw new BadRequestException('Status is required.');
+  //     }
 
-      return this.documentsService.updateDocumentStatus(documentId, status);
-    } catch (error) {
-      console.error('❌ Error updating status:', error);
-      throw new InternalServerErrorException('Failed to update document status');
+  //     return this.documentsService.updateDocumentStatus(documentId, status);
+  //   } catch (error) {
+  //     console.error('❌ Error updating status:', error);
+  //     throw new InternalServerErrorException('Failed to update document status');
+  //   }
+  // }
+
+
+
+  @Put('update-status/:id')
+async updateDocumentStatus(
+  @Param('id') documentId: number,
+  @Body('status') status: string,
+  @Body('rejectionReason') rejectionReason?: string, // Accept rejection reason
+) {
+  try {
+    if (!status) {
+      throw new BadRequestException('Status is required.');
     }
+
+    return this.documentsService.updateDocumentStatus(documentId, status, rejectionReason);
+  } catch (error) {
+    console.error('❌ Error updating status:', error);
+    throw new InternalServerErrorException('Failed to update document status');
   }
+}
 
 
 
