@@ -18,6 +18,8 @@ import { DocumentTypesModule } from './document-types/document-types.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { FeildNamesModule } from './feild_names/feild_names.module';
 import { UserDashboardModule } from './userdashboard/userdashboard.module';
+import { DownloadModule } from './download/download.module';
+import { SingleDocumentModule } from './singledocument/singledocument.module';
 
 
 config();
@@ -49,7 +51,9 @@ config();
     DocumentType,
     FeildNamesModule,
     StatisticsModule,
-    UserDashboardModule
+    UserDashboardModule,
+    DownloadModule,
+    SingleDocumentModule
   ],
   controllers: [AppController],
   providers: [AppService],

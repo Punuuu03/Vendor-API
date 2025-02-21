@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException,NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Document } from '../documents/entities/documents.entity';
@@ -132,6 +132,13 @@ export class UserDashboardService {
       where: { user_id, application_id },
     });
   }
+
+
+
+
+
+
+ 
 }
    
 
